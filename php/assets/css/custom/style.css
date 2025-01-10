@@ -23,10 +23,10 @@ body {
     height: 100vh;
     background: var(--primary-color);
     color: white;
-    transition: width 0.3s ease;
     z-index: 1000;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 .sidebar.collapsed {
@@ -35,8 +35,26 @@ body {
 
 .sidebar.collapsed .brand-name,
 .sidebar.collapsed .menu-link span,
-.sidebar.collapsed .menu-arrow {
+.sidebar.collapsed .menu-arrow,
+.sidebar.collapsed .submenu,
+.sidebar.collapsed .menu-bottom span {
     display: none;
+}
+
+/* Resize Handle */
+.sidebar-resize-handle {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    cursor: ew-resize;
+    background: transparent;
+}
+
+.sidebar-resize-handle:hover,
+.sidebar-resize-handle.dragging {
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .brand {
@@ -44,6 +62,7 @@ body {
     display: flex;
     align-items: center;
     gap: 1rem;
+    flex-shrink: 0;
 }
 
 .brand i {
@@ -57,12 +76,28 @@ body {
     white-space: nowrap;
 }
 
-/* Menu Styles */
+/* Menu List Styles */
 .menu-list {
     list-style: none;
     padding: 0 1rem;
     margin: 0;
     flex-grow: 1;
+    overflow-y: auto;
+    max-height: calc(100vh - 150px);
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.menu-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.menu-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.menu-list::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
 }
 
 .menu-item {
@@ -77,6 +112,7 @@ body {
     text-decoration: none;
     border-radius: 0.5rem;
     transition: all 0.3s ease;
+    white-space: nowrap;
 }
 
 .menu-link:hover, 
@@ -93,37 +129,46 @@ body {
 .menu-arrow {
     margin-left: auto;
     transition: transform 0.3s ease;
+    font-size: 0.85rem;
 }
 
-.menu-link[aria-expanded="true"] .menu-arrow {
-    transform: rotate(90deg);
-}
-
+/* Submenu Styles */
 .submenu {
     padding-left: 3.5rem;
+    overflow: hidden;
 }
 
 .submenu .menu-link {
     padding: 0.5rem 1rem;
+    font-size: 0.95rem;
 }
 
 .menu-bottom {
     padding: 1rem;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
+    margin-top: auto;
 }
 
 /* Main Content Wrapper */
 .main-wrapper {
     margin-left: var(--sidebar-width);
-    transition: margin-left 0.3s ease;
     min-height: 100vh;
+    transition: margin-left 0.3s ease;
+    width: calc(100% - var(--sidebar-width));
 }
 
 .main-wrapper.expanded {
     margin-left: var(--sidebar-collapsed-width);
+    width: calc(100% - var(--sidebar-collapsed-width));
 }
 
-/* Header */
+/* Animation Classes */
+.menu-link[aria-expanded="true"] .menu-arrow {
+    transform: rotate(90deg);
+}
+
+/* Top Header */
 .top-header {
     background: white;
     height: var(--header-height);
@@ -132,7 +177,11 @@ body {
     align-items: center;
     justify-content: space-between;
     border-bottom: 1px solid #e5e7eb;
+    width: 100%;
+    position: relative;
 }
+
+
 
 .hamburger {
     font-size: 1.5rem;
@@ -279,4 +328,89 @@ body {
 .status-warning {
     background: #FEF3C7;
     color: #D97706;
+}
+
+/* Camera Status Styles */
+.camera-status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.progress-bar {
+    height: 8px;
+    background: #E5E7EB;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-bar .online {
+    height: 100%;
+    background: #10B981;
+    width: 92%;
+}
+
+.progress-bar .offline {
+    height: 100%;
+    background: #EF4444;
+    width: 8%;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+    
+    .sidebar.active {
+        transform: translateX(0);
+    }
+    
+    .main-wrapper {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .sidebar-resize-handle {
+        display: none;
+    }
+    
+    .main-wrapper.expanded {
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .data-table {
+        display: block;
+        overflow-x: auto;
+    }
+}
+
+/* Login Page Specific Styles */
+.login-container {
+    width: 100%;
+    max-width: 420px;
+    margin: auto;
+}
+
+.system-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.system-icon i {
+    font-size: 35px;
+    color: white;
 }

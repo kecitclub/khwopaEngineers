@@ -26,8 +26,25 @@ $currentUser = getCurrentUser();
     <link href="assets/css/custom/style.css" rel="stylesheet">
 </head>
 <body>
-    <!-- Include sidebar menu -->
-    <?php include 'includes/templates/admin_menu.php'; ?>
+    <!-- Include appropriate menu based on user type -->
+    <?php
+    switch($currentUser['user_type']) {
+        case USER_ADMIN:
+            include 'includes/templates/admin_menu.php';
+            break;
+        case USER_DISTRICT:
+            include 'includes/templates/district_menu.php';
+            break;
+        case USER_STATION:
+            include 'includes/templates/station_menu.php';
+            break;
+        default:
+            // Log unauthorized access attempt
+            error_log("Unauthorized user type detected: " . $currentUser['user_type']);
+            header("Location: unauthorized.php");
+            exit();
+    }
+    ?>
 
     <!-- Main content wrapper -->
     <div class="main-wrapper">
@@ -38,8 +55,22 @@ $currentUser = getCurrentUser();
             </div>
             <div class="user-profile">
                 <div class="user-info">
-                    <p class="user-name">System Admin</p>
-                    <p class="user-role">Admin</p>
+                    <p class="user-name"><?php echo htmlspecialchars($currentUser['full_name']); ?></p>
+                    <p class="user-role"><?php 
+                        switch($currentUser['user_type']) {
+                            case USER_ADMIN:
+                                echo 'System Administrator';
+                                break;
+                            case USER_DISTRICT:
+                                echo 'District Controller';
+                                break;
+                            case USER_STATION:
+                                echo 'Station Operator';
+                                break;
+                            default:
+                                echo 'User';
+                        }
+                    ?></p>
                 </div>
                 <div class="dropdown">
                     <button class="btn btn-link p-0" type="button" data-bs-toggle="dropdown">
@@ -59,8 +90,18 @@ $currentUser = getCurrentUser();
         <!-- Main content -->
         <div class="main-content">
             <?php
-            // Include dashboard
-            include "views/admin/dashboard.php";
+            // Include dashboard based on user type
+            switch($currentUser['user_type']) {
+                case USER_ADMIN:
+                    include "views/admin/dashboard.php";
+                    break;
+                case USER_DISTRICT:
+                    include "views/district/dashboard.php";
+                    break;
+                case USER_STATION:
+                    include "views/station/dashboard.php";
+                    break;
+            }
             ?>
         </div>
     </div>

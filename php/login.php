@@ -107,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             border: 2px solid #e2e8f0;
             padding: 10px 15px;
             font-size: 15px;
-            transition: all 0.3s ease;
+            transition: all 0.0s ease;
         }
 
         .form-control:focus {
@@ -169,7 +169,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         @keyframes fadeInUp {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(0);
             }
             to {
                 opacity: 1;
