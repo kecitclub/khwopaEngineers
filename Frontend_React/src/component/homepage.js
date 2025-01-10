@@ -8,7 +8,7 @@ const HomePage = () => {
       <nav className="menu-bar">
         <ul>
           <li>
-            <a href="#vehicle">Vehicle</a>
+            <a href="/vehicle">Vehicle</a>
             <ul className="dropdown-menu">
               <li>
                 <a href="#create">Create a</a>
@@ -17,7 +17,7 @@ const HomePage = () => {
             </ul>
           </li>
           <li>
-            <a href="#camera">Camera</a>
+            <a href="/camera">Camera</a>
             <ul className="dropdown-menu">
               <li>
                 <a href="#create">Create</a>

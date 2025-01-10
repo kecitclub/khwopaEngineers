@@ -32,13 +32,14 @@ function CameraFormPage() {
   };
 
   return (
-    <div className="form-container">
+    <>    <div className="form-container">
       <h2>Camera Information</h2>
       <form onSubmit={handleSubmit}>
         <CameraForm cameraInfo={cameraInfo} handleCameraChange={handleCameraChange} /> {/* Camera Form */}
         <SubmitButton />
       </form>
     </div>
+    </>
   );
 }
 

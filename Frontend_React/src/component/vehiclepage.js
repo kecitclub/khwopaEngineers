@@ -3,6 +3,7 @@ import './combine.css';
 import VehicleForm from './vehicleform';
 import OwnerForm from './ownerfoem';
 import SubmitButton from './submitbutton';
+import VehicleTable from './vehicletable';
 
 function VehicleOwnerForm() {
   const [vehicleInfo, setVehicleInfo] = useState({
@@ -55,14 +56,17 @@ function VehicleOwnerForm() {
   };
 
   return (
-    <div className="form-container">
+    <>
+    {/* <div className="form-container">
       <h2>Vehicle and Owner Information Form</h2>
       <form onSubmit={handleSubmit}>
         <VehicleForm vehicleInfo={vehicleInfo} handleVehicleChange={handleVehicleChange} />
         <OwnerForm ownerInfo={ownerInfo} handleOwnerChange={handleOwnerChange} />
         <SubmitButton />
       </form>
-    </div>
+    </div> */}
+    <VehicleTable />
+    </>
   );
 }
 
