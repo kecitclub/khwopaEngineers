@@ -2,13 +2,18 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import CameraFormPage from "./component/caminfo";
 import VehicleOwnerForm from "./component/vehiclepage";
 import HomePage from "./component/homepage";
+import RetriveVehicle from "./component/vehicleretrive";
+import DefaultVehicle from "./component/vehiclepage"
 
 
 function App(){
   const routes = [
-    { path: "/",element: <HomePage />},
+    { path: "/",element: <HomePage/>},
     { path: "/camera",element: <CameraFormPage/>},
-    { path: "/vehicle",element: <VehicleOwnerForm/>},
+    { path: "/vehicle",element: <DefaultVehicle/>},
+    { path: "/vehicle/retrive-vehicle",element: <RetriveVehicle/>},
+    { path: "/vehicle/create-vehicle",element: <VehicleOwnerForm/>},
+
   ];
 
   return(
