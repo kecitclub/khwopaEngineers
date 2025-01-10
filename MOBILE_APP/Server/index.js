@@ -2,7 +2,7 @@ const express = require('express');
 const mysql = require('mysql2/promise');
 const dotenv = require('dotenv');
 const routes = require('./routes.js');
-const WebSocket = require('ws');  // Import WebSocket library
+const WebSocket = require('ws');
 
 dotenv.config();
 
@@ -69,7 +69,7 @@ const simulateTrackingChange = async () => {
 };
 
 
-setInterval(simulateTrackingChange, 3000);
+setInterval(simulateTrackingChange, 1000);
 
 // Start the server
 const startServer = async () => {
