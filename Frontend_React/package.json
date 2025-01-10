@@ -1,5 +1,5 @@
 {
-  "name": "system",
+  "name": "Frontend_React",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -8,7 +8,12 @@
     "@testing-library/user-event": "^13.5.0",
     "ajv": "^8.17.1",
     "ajv-keywords": "^5.1.0",
+<<<<<<< HEAD
     "antd": "^5.23.0",
+=======
+    "axios": "^1.7.9",
+    "bootstrap": "^5.3.3",
+>>>>>>> 680df69e3885f0b971b184e4996299de7ecbfe8c
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.1.1",

@@ -1,12 +1,21 @@
+<<<<<<< HEAD
 import React, { useState } from 'react';
 import './combine.css';
 import VehicleForm from './vehicleform';
 import OwnerForm from './ownerfoem';
 import SubmitButton from './submitbutton';
 import VehicleTable from './vehicletable';
+=======
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
+import { Link } from 'react-router-dom';
+>>>>>>> 680df69e3885f0b971b184e4996299de7ecbfe8c
 
-function VehicleOwnerForm() {
-  const [vehicleInfo, setVehicleInfo] = useState({
+const DefaultVehicle = () => {
+  const [vehicles, setVehicles] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [newVehicle, setNewVehicle] = useState({
     chasis_number: '',
     engine_number: '',
     company_name: '',
@@ -22,40 +31,68 @@ function VehicleOwnerForm() {
     darta_miti: ''
   });
 
-  const [ownerInfo, setOwnerInfo] = useState({
-    owner_name: '',
-    owner_location: ''
-  });
+  useEffect(() => {
+    // Fetch vehicle data from the backend API
+    axios.get('http://localhost:5000/vehicle')
+      .then((response) => {
+        setVehicles(response.data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error);
+        setLoading(false);
+      });
+  }, []);
 
-  const handleVehicleChange = (e) => {
-    const { name, value } = e.target;
-    setVehicleInfo({
-      ...vehicleInfo,
-      [name]: value
-    });
+//   const handleDelete = (vehicleId) => {
+//     axios.delete(`http://localhost:5000/delete-vehicle/${vehicleId}`)
+//       .then(() => {
+//         alert('Vehicle deleted successfully!');
+//         setVehicles(vehicles.filter(vehicle => vehicle.vehicle_id !== vehicleId));
+//       })
+//       .catch(error => {
+//         console.error('Error deleting vehicle:', error);
+//         alert('Error deleting vehicle');
+//       });
+//   };
+
+//   const handleUpdate = (vehicleId) => {
+//     // Prepare updated vehicle data (for simplicity, hardcoding a sample update)
+//     const updatedVehicle = { ...newVehicle, build_year: 2022 };
+//     axios.put(`http://localhost:5000/update-vehicle/${vehicleId}`, updatedVehicle)
+//       .then(() => {
+//         alert('Vehicle updated successfully!');
+//         setVehicles(vehicles.map(vehicle => vehicle.vehicle_id === vehicleId ? { ...vehicle, ...updatedVehicle } : vehicle));
+//       })
+//       .catch(error => {
+//         console.error('Error updating vehicle:', error);
+//         alert('Error updating vehicle');
+//       });
+//   };
+
+//   const handleInputChange = (e) => {
+//     const { name, value } = e.target;
+//     setNewVehicle({
+//       ...newVehicle,
+//       [name]: value
+//     });
+//   };
+
+  // Define the styles using constants
+  const tableCellStyle = {
+    padding: '0px 40px',
+    textAlign: 'center', // Horizontal alignment
+    verticalAlign: 'middle', // Vertical alignment
   };
 
-  const handleOwnerChange = (e) => {
-    const { name, value } = e.target;
-    setOwnerInfo({
-      ...ownerInfo,
-      [name]: value
-    });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Combine vehicle and owner information
-    const combinedData = {
-      vehicleInfo,
-      ownerInfo
-    };
-    console.log('Form Data Submitted:', combinedData);
-    alert('Form submitted successfully!');
-    // Add your API call or database logic here
+  const tableContainerStyle = {
+    maxHeight: '400px',  
+    overflowY: 'auto',  
+    display: 'block',    
   };
 
   return (
+<<<<<<< HEAD
     <>
     {/* <div className="form-container">
       <h2>Vehicle and Owner Information Form</h2>
@@ -67,7 +104,18 @@ function VehicleOwnerForm() {
     </div> */}
     <VehicleTable />
     </>
+=======
+    <div className="container mt-2 p-4">
+      <h1 className="text-center mb-5">Vehicle Information</h1>
+      
+      <div className="d-flex justify-content-center mb-4">
+        <Link to="/vehicle/create-vehicle" className="btn btn-success me-3 w-25">Create</Link>
+        <Link to="/vehicle/create-vehicle" className="btn btn-warning me-3 w-25">Update</Link>
+        <Link to="/vehicle/create-vehicle" className="btn btn-danger me-3 w-25">Delete</Link>
+        </div>
+    </div>
+>>>>>>> 680df69e3885f0b971b184e4996299de7ecbfe8c
   );
-}
+};
 
-export default VehicleOwnerForm;
+export default DefaultVehicle;

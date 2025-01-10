@@ -1,0 +1,114 @@
+/* Reset default styling */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    /* background-image: url('../images/bg.jpg');  */
+    background-size: cover; /* Make the image cover the entire page */
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Prevent tiling */
+    height: 100vh; /* Make the height fill the viewport */
+    width: 100%;
+}
+
+/* Styling for the navbar component */
+.navcomponent {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    position: relative; /* Ensure it stays above the background */
+    z-index: 10;
+}
+
+/* Navbar container */
+.navbar {
+    height: 60px; /* Adjusted height for consistency */
+    width: 95%;
+    display: flex;
+    justify-content: space-between; /* Space between brand and links */
+    align-items: center;
+    padding: 0 2rem;
+    margin-top: 4%;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Shadow effect */
+    background-color: #89a0bc; /* Ensure the navbar has a background */
+}
+
+/* Navbar links container */
+.navbar-nav {
+    display: flex;
+    justify-content: flex-end; /* Align links to the right */
+    width: auto;
+    gap: 80px;
+}
+
+/* Navbar links */
+.navbar-nav .nav-link {
+    font-size: 1.2rem;
+    color: #000; /* Black color for better visibility */
+    margin: 0 0.5rem;
+    text-decoration: none;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #5100ff6a; /* Highlight on hover */
+    text-decoration: underline;
+}
+
+.nav-item.dropdown .dropdown-menu {
+    display: none; /* Initially hidden */
+    position: absolute;
+    top: 100%; /* Position below the parent link */
+    left: -20%;
+    background-color: rgba(102, 97, 168, 0.568) !important; /* Force red color with !important */
+    padding: 0.3rem 0.8rem; /* Reduced padding for smaller size */
+    border-radius: 5px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    width: 150px; /* Adjusted width */
+    height: auto; /* Let the height adjust based on content */
+}
+
+/* Sub-navbar (dropdown) styling */
+.dropdown-menu {
+    display: none; 
+    position: absolute;
+    top: 100%; /* Adjusted to be directly below */
+    left: 0;
+    background-color: red !important;
+}
+
+
+
+/* Dropdown menu items */
+.dropdown-item {
+    font-size: 0.9rem; /* Slightly smaller font size */
+    color: #000;
+    margin: 0..1rem 0rem; /* Reduced margin */
+    text-decoration: none;
+}
+
+.dropdown-item:hover {
+    color: #00796b; /* Teal color for hover effect */
+    text-decoration: underline;
+}
+
+/* Show dropdown menu on hover */
+.nav-item.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+.info, .cta{
+    margin-top: 5%;
+    padding: 0 4% 0 4%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    color: #000;
+}
+
+.cta{
+    margin-top: 3%;
+}
