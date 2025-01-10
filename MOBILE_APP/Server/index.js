@@ -69,7 +69,7 @@ const simulateTrackingChange = async () => {
 };
 
 
-setInterval(simulateTrackingChange, 5000);
+setInterval(simulateTrackingChange, 3000);
 
 // Start the server
 const startServer = async () => {
