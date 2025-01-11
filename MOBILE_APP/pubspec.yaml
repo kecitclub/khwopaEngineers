@@ -40,6 +40,8 @@ dependencies:
   audioplayers:
   flutter_local_notifications:
   shared_preferences:
+  url_launcher:
+  google_maps_flutter:
 
 dev_dependencies:
   flutter_test:
