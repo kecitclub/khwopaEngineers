@@ -1,16 +1,7 @@
-<<<<<<< HEAD
-import React, { useState } from 'react';
-import './combine.css';
-import VehicleForm from './vehicleform';
-import OwnerForm from './ownerfoem';
-import SubmitButton from './submitbutton';
-import VehicleTable from './vehicletable';
-=======
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
 import { Link } from 'react-router-dom';
->>>>>>> 680df69e3885f0b971b184e4996299de7ecbfe8c
 
 const DefaultVehicle = () => {
   const [vehicles, setVehicles] = useState([]);
@@ -92,19 +83,6 @@ const DefaultVehicle = () => {
   };
 
   return (
-<<<<<<< HEAD
-    <>
-    {/* <div className="form-container">
-      <h2>Vehicle and Owner Information Form</h2>
-      <form onSubmit={handleSubmit}>
-        <VehicleForm vehicleInfo={vehicleInfo} handleVehicleChange={handleVehicleChange} />
-        <OwnerForm ownerInfo={ownerInfo} handleOwnerChange={handleOwnerChange} />
-        <SubmitButton />
-      </form>
-    </div> */}
-    <VehicleTable />
-    </>
-=======
     <div className="container mt-2 p-4">
       <h1 className="text-center mb-5">Vehicle Information</h1>
       
@@ -114,7 +92,6 @@ const DefaultVehicle = () => {
         <Link to="/vehicle/create-vehicle" className="btn btn-danger me-3 w-25">Delete</Link>
         </div>
     </div>
->>>>>>> 680df69e3885f0b971b184e4996299de7ecbfe8c
   );
 };
 
