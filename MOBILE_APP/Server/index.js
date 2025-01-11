@@ -2,7 +2,7 @@ const express = require('express');
 const mysql = require('mysql2/promise');
 const dotenv = require('dotenv');
 const routes = require('./routes.js');
-const WebSocket = require('ws');  // Import WebSocket library
+const WebSocket = require('ws');
 
 dotenv.config();
 
@@ -23,7 +23,7 @@ const server = require('http').createServer(app);
 const wss = new WebSocket.Server({ server });
 
 app.use(express.json());
-app.use('/api/traffic', routes);
+app.use('/api', routes);
 
 // WebSocket connection handling
 wss.on('connection', (ws) => {
@@ -44,16 +44,48 @@ wss.on('connection', (ws) => {
 });
 
 // Fetch tracking data and send it to the WebSocket client
+// const fetchTrackingsAndSend = async (ws) => {
+//     try {
+//         const [rows] = await DB.query('SELECT * FROM trackings');
+//         ws.send(JSON.stringify(rows));
+//     } catch (err) {
+//         console.error("Database Error:", err);
+//     }
+// };
+
+// // Simulate tracking data updates and broadcast to all connected WebSocket clients
+
+
+wss.on('connection', (ws) => {
+    console.log('New WebSocket connection established.');
+
+    // Send current trackings to the client when they connect
+    fetchTrackingsAndSend(ws);
+
+    // Listen for any incoming messages from the client
+    ws.on('message', (message) => {
+        console.log('Received from client:', message);
+    });
+
+    ws.on('close', () => {
+        console.log('WebSocket connection closed.');
+    });
+});
+
 const fetchTrackingsAndSend = async (ws) => {
     try {
-        const [rows] = await DB.query('SELECT * FROM trackings');
-        ws.send(JSON.stringify(rows));
+        // Fetch trackings with alert information
+        const [rows] = await DB.query(`
+            SELECT t.*, a.alert_type, a.acknowledged 
+            FROM trackings t 
+            LEFT JOIN alerts a ON t.number_plate = a.number_plate
+        `);
+        ws.send(JSON.stringify({ type: 'trackings', trackings: rows }));
     } catch (err) {
         console.error("Database Error:", err);
     }
 };
 
-// Simulate tracking data updates and broadcast to all connected WebSocket clients
 const simulateTrackingChange = async () => {
     try {
         const [updatedTrackings] = await DB.query('SELECT * FROM trackings');
@@ -69,7 +101,50 @@ const simulateTrackingChange = async () => {
 };
 
 
-setInterval(simulateTrackingChange, 3000);
+// Monitor alerts table for changes
+const monitorAlerts = async () => {
+    try {
+        const [alerts] = await DB.query(`
+            SELECT a.*, t.description 
+            FROM alerts a 
+            JOIN trackings t ON a.number_plate = t.number_plate 
+            WHERE a.acknowledged = FALSE
+        `);
+
+        // Broadcast alerts to relevant clients
+        wss.clients.forEach((client) => {
+            if (client.readyState === WebSocket.OPEN) {
+                alerts.forEach((alert) => {
+                    client.send(JSON.stringify({
+                        type: 'alert',
+                        alert: alert
+                    }));
+                });
+            }
+        });
+
+        // Also send updated tracking list
+        const [trackings] = await DB.query(`
+            SELECT t.*, a.alert_type, a.acknowledged 
+            FROM trackings t 
+            LEFT JOIN alerts a ON t.number_plate = a.number_plate
+        `);
+
+        wss.clients.forEach((client) => {
+            if (client.readyState === WebSocket.OPEN) {
+                client.send(JSON.stringify({
+                    type: 'trackings',
+                    trackings: trackings
+                }));
+            }
+        });
+    } catch (err) {
+        console.error("Error monitoring alerts:", err);
+    }
+};
+
+setInterval(simulateTrackingChange, 1000);
+setInterval(monitorAlerts, 1000);
 
 // Start the server
 const startServer = async () => {

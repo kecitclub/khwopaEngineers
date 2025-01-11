@@ -5,6 +5,33 @@ import "./navbar.css";
 
 const HomePage = () => {
   return (
+<<<<<<< HEAD
+    <div className="images">
+      <nav className="menu-bar">
+        <ul>
+          <li>
+            <a href="/vehicle">Vehicle</a>
+            <ul className="dropdown-menu">
+              <li>
+                <a href="#create">Create a</a>
+
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a href="/camera">Camera</a>
+            <ul className="dropdown-menu">
+              <li>
+                <a href="#create">Create</a>
+                <a href="#create">Update</a>
+                <a href="#create">Delete</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <img src={MyImage} alt="Background" id="imagefield" />
+=======
     <div>
       {/* Navbar component included here */}
       <Navbar />
@@ -31,6 +58,7 @@ const HomePage = () => {
           </p>
         </div>
       </div>
+>>>>>>> 680df69e3885f0b971b184e4996299de7ecbfe8c
     </div>
   );
 };
