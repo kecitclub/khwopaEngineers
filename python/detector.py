@@ -3,7 +3,7 @@ import easyocr
 import time
 import numpy as np
 from ultralytics import YOLO
-from datetime import datetime
+from datetime import datetime, timedelta
 import mysql.connector
 from mysql.connector import pooling
 from queue import Queue
@@ -11,7 +11,6 @@ import threading
 import re
 
 camid = 1
-
 
 class PlateRecognizer:
     def __init__(self, cnn_model_path="yolo.pt"):
@@ -202,30 +201,48 @@ class PlateRecognizer:
             conn.close()
 
     def insert_alert(self, tracking_id, number_plate, station_id):
-        """Insert an alert into the alerts table."""
+        """Insert an alert into the alerts table if it's not already present."""
         try:
             conn = self.get_db_connection()
             if not self.is_db_connected(conn):
                 print("Database connection is not available.")
                 return
 
-            alert_type = "critical"
-            timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            acknowledged = 0  # Initially set to 0 (not acknowledged)
+            # Check if this plate has been logged recently (within the last 30 seconds)
+            current_time = datetime.now()
+            time_threshold = (current_time - timedelta(seconds=30)).strftime('%Y-%m-%d %H:%M:%S')
 
             cursor = conn.cursor()
-            cursor.execute("INSERT INTO alerts (station_id, alert_type, timestamp, acknowledged, number_plate) "
-                           "VALUES (%s, %s, %s, %s, %s)",
-                           (station_id, alert_type, timestamp, acknowledged, number_plate))
+            cursor.execute("""
+                SELECT 1 FROM alerts
+                WHERE number_plate = %s AND station_id = %s AND timestamp >= %s
+            """, (number_plate, station_id, time_threshold))
+
+            if cursor.fetchone():
+                # If there's a recent alert for this plate, skip the insert
+                print(f"Alert for plate {number_plate} already exists in the last 30 seconds.")
+                cursor.close()
+                conn.close()
+                return
+
+            # Insert new alert if no recent alerts found
+            alert_type = "critical"  # Example alert type, can be changed based on your needs
+            timestamp = current_time.strftime('%Y-%m-%d %H:%M:%S')
+            acknowledged = 0  # Initially set to 0 (not acknowledged)
+
+            cursor.execute("""
+                INSERT INTO alerts (station_id, alert_type, timestamp, acknowledged, number_plate)
+                VALUES (%s, %s, %s, %s, %s)
+            """, (station_id, alert_type, timestamp, acknowledged, number_plate))
             conn.commit()
 
             print(f"Inserted alert for plate {number_plate} into alerts table.")
 
-        except mysql.connector.Error as err:
-            print(f"Database error: {err}")
-        finally:
             cursor.close()
             conn.close()
+
+        except mysql.connector.Error as err:
+            print(f"Database error: {err}")
 
     def process_frame(self, frame):
         results = self.model(frame, conf=0.5)
