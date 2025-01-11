@@ -25,8 +25,8 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                     <i class="fas fa-bell"></i>
                     <span>Alert Center</span>
                 </a>
-                <a href="views/admin/dashboard/analysis.php" class="menu-link">
-                    <i class="fas fa-chart-bar"></i>
+                <a href="views/admin/tracking/playback.php" class="menu-link">
+                    <i class="fas fa-history"></i>
                     <span>Historical Analysis</span>
                 </a>
             </div>
@@ -82,7 +82,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                 <i class="fas fa-chevron-right menu-arrow"></i>
             </a>
             <div class="collapse submenu" id="cameraSubmenu">
-                <a href="views/admin/cameras/live.php" class="menu-link">
+                <a href="/Traffic-Information-System/views/admin/cameras/live.php" class="menu-link">
                     <i class="fas fa-camera"></i>
                     <span>Live Surveillance</span>
                 </a>
@@ -90,7 +90,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                     <i class="fas fa-cogs"></i>
                     <span>Camera Management</span>
                 </a>
-                <a href="views/admin/cameras/footage.php" class="menu-link">
+                <a href="/Traffic-Information-System/views/admin/cameras/footage.php" class="menu-link">
                     <i class="fas fa-film"></i>
                     <span>Footage Control</span>
                 </a>
