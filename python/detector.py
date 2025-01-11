@@ -3,17 +3,20 @@ import easyocr
 import time
 import numpy as np
 from ultralytics import YOLO
-from datetime import datetime
+from datetime import datetime, timedelta
 import mysql.connector
+from mysql.connector import pooling
 from queue import Queue
 import threading
 import re
+
+camid = 1
 
 class PlateRecognizer:
     def __init__(self, cnn_model_path="yolo.pt"):
         self.model = YOLO(cnn_model_path)
         self.reader = easyocr.Reader(['en'])
-        self.db_conn = self.create_db_connection()
+        self.db_conn_pool = self.create_db_connection_pool()
         self.create_log_table()
         self.detection_queue = Queue()
         self.start_log_worker()
@@ -24,50 +27,82 @@ class PlateRecognizer:
         # Dictionary to track recently logged plates
         self.recent_detections = {}
 
-    def create_db_connection(self):
-        """Create a connection to the MySQL database."""
+    def create_db_connection_pool(self):
+        """Create a connection pool to the MySQL database."""
         try:
-            conn = mysql.connector.connect(
-                host="193.203.185.164", 
-                user="u290660616_pustak", 
-                password="Pustak@123", 
-                database="u290660616_pustak"
+            pool = pooling.MySQLConnectionPool(
+                pool_name="mypool",
+                pool_size=5,
+                host="193.203.185.164",
+                user="u290660616_pustak",
+                password="Pustak@237",
+                database="u290660616_pustak",
+                port="3306"
             )
-            if conn.is_connected():
-                print("Connected to MySQL database")
-            return conn
+            print("Database connection pool created")
+            return pool
         except mysql.connector.Error as err:
-            print(f"Error: {err}")
+            print(f"Error creating connection pool: {err}")
             raise
 
+    def get_db_connection(self):
+        """Get a connection from the connection pool."""
+        return self.db_conn_pool.get_connection()
+
     def create_log_table(self):
-        cursor = self.db_conn.cursor()
+        """Create the log_info table if it doesn't exist."""
+        conn = self.get_db_connection()
+        cursor = conn.cursor()
         cursor.execute('''CREATE TABLE IF NOT EXISTS log_info (
-                            id INT AUTO_INCREMENT PRIMARY KEY,
-                            plate_text VARCHAR(255),
+                            logid INT AUTO_INCREMENT PRIMARY KEY,
+                            number_plate VARCHAR(30),
                             timestamp DATETIME
                         )''')
-        self.db_conn.commit()
+        conn.commit()
+        cursor.close()
+        conn.close()
 
-    def log_detection(self, plate_text):
+    def is_db_connected(self, conn):
+        """Check if the database connection is still available."""
+        try:
+            if conn.is_connected():
+                return True
+            else:
+                conn.ping(reconnect=True, attempts=3, delay=5)
+                return True
+        except mysql.connector.Error as err:
+            print(f"Database connection error: {err}")
+            return False
+
+    def log_detection(self, number_plate):
         """Log detected license plate text with a timestamp in the database."""
         try:
+            conn = self.get_db_connection()
+            if not self.is_db_connected(conn):
+                print("Database connection is not available.")
+                return
+
             current_time = datetime.now()
-            if plate_text in self.recent_detections:
-                last_logged_time = self.recent_detections[plate_text]
+            if number_plate in self.recent_detections:
+                last_logged_time = self.recent_detections[number_plate]
                 if (current_time - last_logged_time).total_seconds() < 30:
-                    print(f"Skipping duplicate log for plate: {plate_text}")
+                    print(f"Skipping duplicate log for plate: {number_plate}")
+                    conn.close()
                     return  # Skip logging if within 30 seconds
 
             # Log to database
             timestamp = current_time.strftime('%Y-%m-%d %H:%M:%S')
-            cursor = self.db_conn.cursor()
-            cursor.execute("INSERT INTO log_info (plate_text, timestamp) VALUES (%s, %s)", (plate_text, timestamp))
-            self.db_conn.commit()
+            cursor = conn.cursor()
+            cursor.execute("INSERT INTO log_info (number_plate, camid, timestamp) VALUES (%s, %s, %s)", 
+                           (number_plate, camid, timestamp))
+            conn.commit()
 
             # Update recent detections
-            self.recent_detections[plate_text] = current_time
-            print(f"Logged plate: {plate_text} at {timestamp}")
+            self.recent_detections[number_plate] = current_time
+            print(f"Logged plate: {number_plate} at {timestamp}")
+
+            cursor.close()
+            conn.close()
         except Exception as e:
             print(f"Error logging detection: {e}")
 
@@ -114,6 +149,101 @@ class PlateRecognizer:
         zone_x1, zone_y1, zone_x2, zone_y2 = self.logging_zone
         return x1 >= zone_x1 and y1 >= zone_y1 and x2 <= zone_x2 and y2 <= zone_y2
 
+    def check_tracking(self, number_plate):
+        """Check if the number plate exists in the tracking table and return tracking info."""
+        try:
+            conn = self.get_db_connection()
+            if not self.is_db_connected(conn):
+                print("Database connection is not available.")
+                return None, None
+
+            cursor = conn.cursor()
+            cursor.execute("SELECT tracking_id, description FROM tracking WHERE number_plate = %s", (number_plate,))
+            result = cursor.fetchone()
+            
+            if result:
+                tracking_id, description = result
+                print(f"Plate {number_plate} is being tracked with tracking_id: {tracking_id}")
+                return tracking_id, description
+            else:
+                print(f"Plate {number_plate} not found in tracking table.")
+                return None, None
+        except mysql.connector.Error as err:
+            print(f"Database error: {err}")
+            return None, None
+        finally:
+            cursor.close()
+            conn.close()
+
+    def get_station_id(self):
+        """Get the station_id based on the camera used."""
+        try:
+            conn = self.get_db_connection()
+            if not self.is_db_connected(conn):
+                print("Database connection is not available.")
+                return None
+
+            cursor = conn.cursor()
+            cursor.execute("SELECT station_id FROM camera_info WHERE camid = %s", (camid,))
+            result = cursor.fetchone()
+            
+            if result:
+                station_id = result[0]
+                return station_id
+            else:
+                print(f"Station ID for camera {camid} not found.")
+                return None
+        except mysql.connector.Error as err:
+            print(f"Database error: {err}")
+            return None
+        finally:
+            cursor.close()
+            conn.close()
+
+    def insert_alert(self, tracking_id, number_plate, station_id):
+        """Insert an alert into the alerts table if it's not already present."""
+        try:
+            conn = self.get_db_connection()
+            if not self.is_db_connected(conn):
+                print("Database connection is not available.")
+                return
+
+            # Check if this plate has been logged recently (within the last 30 seconds)
+            current_time = datetime.now()
+            time_threshold = (current_time - timedelta(seconds=30)).strftime('%Y-%m-%d %H:%M:%S')
+
+            cursor = conn.cursor()
+            cursor.execute("""
+                SELECT 1 FROM alerts
+                WHERE number_plate = %s AND station_id = %s AND timestamp >= %s
+            """, (number_plate, station_id, time_threshold))
+
+            if cursor.fetchone():
+                # If there's a recent alert for this plate, skip the insert
+                print(f"Alert for plate {number_plate} already exists in the last 30 seconds.")
+                cursor.close()
+                conn.close()
+                return
+
+            # Insert new alert if no recent alerts found
+            alert_type = "critical"  # Example alert type, can be changed based on your needs
+            timestamp = current_time.strftime('%Y-%m-%d %H:%M:%S')
+            acknowledged = 0  # Initially set to 0 (not acknowledged)
+
+            cursor.execute("""
+                INSERT INTO alerts (station_id, alert_type, timestamp, acknowledged, number_plate)
+                VALUES (%s, %s, %s, %s, %s)
+            """, (station_id, alert_type, timestamp, acknowledged, number_plate))
+            conn.commit()
+
+            print(f"Inserted alert for plate {number_plate} into alerts table.")
+
+            cursor.close()
+            conn.close()
+
+        except mysql.connector.Error as err:
+            print(f"Database error: {err}")
+
     def process_frame(self, frame):
         results = self.model(frame, conf=0.5)
         for r in results:
@@ -130,6 +260,19 @@ class PlateRecognizer:
 
                     if plate_text:  # Only log valid plates
                         self.detection_queue.put(plate_text)
+
+                        # Check if the plate is already being tracked
+                        tracking_id, description = self.check_tracking(plate_text)
+
+                        # Get the station ID for the camera
+                        station_id = self.get_station_id()
+
+                        if tracking_id is not None:
+                            # If plate is tracked, create a critical alert
+                            self.insert_alert(tracking_id, plate_text, station_id)
+                        else:
+                            # If plate is not tracked, create a general alert
+                            self.insert_alert(None, plate_text, station_id)
 
                     self.draw_boxes(frame, x1, y1, x2, y2, plate_text, box.conf[0])
 
@@ -180,7 +323,7 @@ class PlateRecognizer:
 
     def cleanup(self):
         self.detection_queue.put(None)
-        self.db_conn.close()
+        cv2.destroyAllWindows()
 
 if __name__ == "__main__":
     try:

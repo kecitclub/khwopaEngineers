@@ -1,0 +1,129 @@
+{
+    "stations": [
+        {
+            "id": "STA001",
+            "name": "Baneshwor Police Circle",
+            "latitude": 27.686035046006424,
+            "longitude": 85.34407675266664,
+            "type": "main",
+            "contact": "01-4470199",
+            "coverage": "Baneshwor area",
+            "staff": 15,
+            "boundary": [
+                [27.6900, 85.3400],
+                [27.6900, 85.3500],
+                [27.6800, 85.3500],
+                [27.6800, 85.3400]
+            ],
+            "status": "active"
+        },
+        {
+            "id": "STA002",
+            "name": "Traffic Police Sector, Airport",
+            "latitude": 27.699196606009995,
+            "longitude": 85.35471536909739,
+            "type": "secondary",
+            "contact": "01-4470193",
+            "coverage": "Airport area",
+            "staff": 10,
+            "boundary": [
+                [27.7020, 85.3500],
+                [27.7020, 85.3600],
+                [27.6900, 85.3600],
+                [27.6900, 85.3500]
+            ],
+            "status": "active"
+        },
+        {
+            "id": "STA003",
+            "name": "Police Sector, Koteshwor",
+            "latitude": 27.678846804882717,
+            "longitude": 85.34901908208973,
+            "type": "secondary",
+            "contact": "01-4470194",
+            "coverage": "Koteshwor area",
+            "staff": 8,
+            "boundary": [
+                [27.6820, 85.3450],
+                [27.6820, 85.3550],
+                [27.6740, 85.3550],
+                [27.6740, 85.3450]
+            ],
+            "status": "active"
+        }
+    ],
+    "cameras": [
+        {
+            "id": "CAM001",
+            "name": "New Baneshwor Camera",
+            "latitude": 27.68631025919673,
+            "longitude": 85.34458394990293,
+            "status": "active",
+            "stationId": "STA001",
+            "type": "PTZ",
+            "installed": "2023-01-15",
+            "lastMaintenance": "2024-01-15",
+            "resolution": "1080p"
+        },
+        {
+            "id": "CAM002",
+            "name": "Tinkune-New Baneshwor Camera",
+            "latitude": 27.685702419650333,
+            "longitude": 85.3467113507359,
+            "status": "active",
+            "stationId": "STA001",
+            "type": "Fixed",
+            "installed": "2023-02-20",
+            "lastMaintenance": "2024-02-20",
+            "resolution": "4K"
+        },
+        {
+            "id": "CAM003",
+            "name": "Tinkune-Airport Camera",
+            "latitude": 27.68732850095225,
+            "longitude": 85.35048068193424,
+            "status": "active",
+            "stationId": "STA002",
+            "type": "PTZ",
+            "installed": "2023-03-10",
+            "lastMaintenance": "2024-03-10",
+            "resolution": "1080p"
+        },
+        {
+            "id": "CAM004",
+            "name": "Airport Camera",
+            "latitude": 27.698983477775045,
+            "longitude": 85.35492554250315,
+            "status": "active",
+            "stationId": "STA002",
+            "type": "Fixed",
+            "installed": "2023-04-05",
+            "lastMaintenance": "2024-04-05",
+            "resolution": "1080p"
+        },
+        {
+            "id": "CAM005",
+            "name": "Tinkune-Koteshwor Camera",
+            "latitude": 27.68281084587928,
+            "longitude": 85.3494191407928,
+            "status": "active",
+            "stationId": "STA003",
+            "type": "PTZ",
+            "installed": "2023-05-15",
+            "lastMaintenance": "2024-05-15",
+            "resolution": "4K"
+        },
+        {
+            "id": "CAM006",
+            "name": "Koteshwor Camera",
+            "latitude": 27.67898972600688,
+            "longitude": 85.34952977349957,
+            "status": "active",
+            "stationId": "STA003",
+            "type": "Fixed",
+            "installed": "2023-06-20",
+            "lastMaintenance": "2024-06-20",
+            "resolution": "1080p"
+        }
+    ]
+}

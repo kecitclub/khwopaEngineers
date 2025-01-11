@@ -1,0 +1,86 @@
+[
+    {
+        "id": "Cam1",
+        "location": "New Baneshwor Chowk",
+        "lat": 27.688154,
+        "lng": 85.335910,
+        "status": "active"
+    },
+    {
+        "id": "Cam2",
+        "location": "Gaushala Chowk",
+        "lat": 27.707714,
+        "lng": 85.343529,
+        "status": "active"
+    },
+    {
+        "id": "Cam3",
+        "location": "Basundhara Chowk", 
+        "lat": 27.742021,
+        "lng": 85.332129,
+        "status": "active"
+    },
+    {
+        "id": "Cam4",
+        "location": "Swayambhunath Area",
+        "lat": 27.716340,
+        "lng": 85.283666,
+        "status": "active"
+    },
+    {
+        "id": "Cam5",
+        "location": "Kalanki Junction", 
+        "lat": 27.693656,
+        "lng": 85.281804,
+        "status": "active"
+    },
+    {
+        "id": "Cam6",
+        "location": "Tinkune Intersection",
+        "lat": 27.682645,
+        "lng": 85.349300,
+        "status": "active"
+    },
+    {
+        "id": "Cam7",
+        "location": "Koteshwor Junction",
+        "lat": 27.678688,
+        "lng": 85.349232,
+        "status": "active"
+    },
+    {
+        "id": "Cam8",
+        "location": "Balkhu Chowk",
+        "lat": 27.684973,
+        "lng": 85.296248,
+        "status": "active"
+    },
+    {
+        "id": "Cam9",
+        "location": "Kalimati Chowk",
+        "lat": 27.697849,
+        "lng": 85.297637,
+        "status": "active"
+    },
+    {
+        "id": "Cam10",
+        "location": "Balaju Chowk",
+        "lat": 27.727040,
+        "lng": 85.304813,
+        "status": "active"
+    },
+    {
+        "id": "Cam11",
+        "location": "Chabahil Chowk",
+        "lat": 27.716992,
+        "lng": 85.346489,
+        "status": "active"
+    },
+    {
+        "id": "Cam12",
+        "location": "KEC Junction",
+        "lat": 27.697774,
+        "lng": 85.297333,
+        "status": "active"
+    }
+]

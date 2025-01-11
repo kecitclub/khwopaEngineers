@@ -1,0 +1,81 @@
+.update-camera-container {
+    max-width: 600px;
+    margin: 30px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 
+      0 0 10px rgba(255, 255, 255, 0.713), 
+      0 8px 16px rgba(0, 0, 0, 0.6); 
+    font-family: Arial, sans-serif;
+  }
+  
+  .update-camera-container h2 {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .update-camera-form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .update-camera-form label {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 5px;
+  }
+  
+  .update-camera-form input {
+    font-size: 16px;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+  }
+  
+  .update-camera-form input:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+  
+  .update-camera-form button {
+    background-color: #007bff;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .update-camera-form button:disabled {
+    background-color: #aaa;
+    cursor: not-allowed;
+  }
+  
+  .update-camera-form button:hover:not(:disabled) {
+    background-color: #0056b3;
+  }
+  
+  .message {
+    text-align: center;
+    font-size: 14px;
+    margin-top: 10px;
+  }
+  
+  .message.success {
+    color: green;
+  }
+  
+  .message.error {
+    color: red;
+  }
+  
