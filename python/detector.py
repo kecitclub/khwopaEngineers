@@ -230,6 +230,15 @@ class PlateRecognizer:
             timestamp = current_time.strftime('%Y-%m-%d %H:%M:%S')
             acknowledged = 0  # Initially set to 0 (not acknowledged)
 
+            if station_id == 1:
+                station_id= "ktm_district"
+            elif station_id == 2:
+                station_id= "lalitpur_district"
+            elif station_id == 3:
+                station_id= "ktm_station1"
+            elif station_id == 4:
+                station_id= "lalitpur_station1"
+
             cursor.execute("""
                 INSERT INTO alerts (station_id, alert_type, timestamp, acknowledged, number_plate)
                 VALUES (%s, %s, %s, %s, %s)
