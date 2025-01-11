@@ -111,13 +111,28 @@ router.post('/traffic/acknowledge-alert', async (req, res) => {
 
     try {
         await DB.query(
-            'UPDATE alerts SET is_acknowledged = TRUE WHERE station_id = ? AND number_plate = ?',
+            'UPDATE alerts SET acknowledged = TRUE WHERE station_id = ? AND number_plate = ?',
             [station_id, number_plate]
         );
         res.json({ message: 'Alert acknowledged successfully' });
     } catch (err) {
         console.error("Error acknowledging alert:", err);
         res.status(500).json({ error: 'Failed to acknowledge alert' });
+    }
+});
+
+router.post('/traffic/delete-alert', async (req, res) => {
+    const { station_id, number_plate } = req.body;
+
+    try {
+        await DB.query(
+            'DELETE FROM alerts WHERE station_id = ? AND number_plate = ?',
+            [station_id, number_plate]
+        );
+        res.json({ message: 'Alert deleted successfully' });
+    } catch (err) {
+        console.error("Error deleting alert:", err);
+        res.status(500).json({ error: 'Failed to delete alert' });
     }
 });
 
