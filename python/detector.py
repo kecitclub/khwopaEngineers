@@ -12,6 +12,7 @@ import re
 
 camid = 1
 
+
 class PlateRecognizer:
     def __init__(self, cnn_model_path="yolo.pt"):
         self.model = YOLO(cnn_model_path)
@@ -149,6 +150,83 @@ class PlateRecognizer:
         zone_x1, zone_y1, zone_x2, zone_y2 = self.logging_zone
         return x1 >= zone_x1 and y1 >= zone_y1 and x2 <= zone_x2 and y2 <= zone_y2
 
+    def check_tracking(self, number_plate):
+        """Check if the number plate exists in the tracking table and return tracking info."""
+        try:
+            conn = self.get_db_connection()
+            if not self.is_db_connected(conn):
+                print("Database connection is not available.")
+                return None, None
+
+            cursor = conn.cursor()
+            cursor.execute("SELECT tracking_id, description FROM tracking WHERE number_plate = %s", (number_plate,))
+            result = cursor.fetchone()
+            
+            if result:
+                tracking_id, description = result
+                print(f"Plate {number_plate} is being tracked with tracking_id: {tracking_id}")
+                return tracking_id, description
+            else:
+                print(f"Plate {number_plate} not found in tracking table.")
+                return None, None
+        except mysql.connector.Error as err:
+            print(f"Database error: {err}")
+            return None, None
+        finally:
+            cursor.close()
+            conn.close()
+
+    def get_station_id(self):
+        """Get the station_id based on the camera used."""
+        try:
+            conn = self.get_db_connection()
+            if not self.is_db_connected(conn):
+                print("Database connection is not available.")
+                return None
+
+            cursor = conn.cursor()
+            cursor.execute("SELECT station_id FROM camera_info WHERE camid = %s", (camid,))
+            result = cursor.fetchone()
+            
+            if result:
+                station_id = result[0]
+                return station_id
+            else:
+                print(f"Station ID for camera {camid} not found.")
+                return None
+        except mysql.connector.Error as err:
+            print(f"Database error: {err}")
+            return None
+        finally:
+            cursor.close()
+            conn.close()
+
+    def insert_alert(self, tracking_id, number_plate, station_id):
+        """Insert an alert into the alerts table."""
+        try:
+            conn = self.get_db_connection()
+            if not self.is_db_connected(conn):
+                print("Database connection is not available.")
+                return
+
+            alert_type = "critical"
+            timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            acknowledged = 0  # Initially set to 0 (not acknowledged)
+
+            cursor = conn.cursor()
+            cursor.execute("INSERT INTO alerts (station_id, alert_type, timestamp, acknowledged, number_plate) "
+                           "VALUES (%s, %s, %s, %s, %s)",
+                           (station_id, alert_type, timestamp, acknowledged, number_plate))
+            conn.commit()
+
+            print(f"Inserted alert for plate {number_plate} into alerts table.")
+
+        except mysql.connector.Error as err:
+            print(f"Database error: {err}")
+        finally:
+            cursor.close()
+            conn.close()
+
     def process_frame(self, frame):
         results = self.model(frame, conf=0.5)
         for r in results:
@@ -165,6 +243,19 @@ class PlateRecognizer:
 
                     if plate_text:  # Only log valid plates
                         self.detection_queue.put(plate_text)
+
+                        # Check if the plate is already being tracked
+                        tracking_id, description = self.check_tracking(plate_text)
+
+                        # Get the station ID for the camera
+                        station_id = self.get_station_id()
+
+                        if tracking_id is not None:
+                            # If plate is tracked, create a critical alert
+                            self.insert_alert(tracking_id, plate_text, station_id)
+                        else:
+                            # If plate is not tracked, create a general alert
+                            self.insert_alert(None, plate_text, station_id)
 
                     self.draw_boxes(frame, x1, y1, x2, y2, plate_text, box.conf[0])
 
